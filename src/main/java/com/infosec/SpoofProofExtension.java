@@ -801,7 +801,7 @@ public class SpoofProofExtension implements IBurpExtender, ITab, IContextMenuFac
 
         // Define colors for different risk levels
         private static final Color SECURE_COLOR = new Color(144, 238, 144); // Light Green
-        private static final Color MODERATE_RISK_COLOR = new Color(255, 255, 102); // Light Yellow
+        private static final Color LOW_RISK_COLOR = new Color(255, 255, 102); // Light Yellow
         private static final Color HIGH_RISK_COLOR = new Color(255, 102, 102); // Light Red
         private static final Color DEFAULT_COLOR = Color.WHITE;
 
@@ -834,8 +834,8 @@ public class SpoofProofExtension implements IBurpExtender, ITab, IContextMenuFac
 
                 if (verdict.contains("high risk")) {
                     label.setBackground(HIGH_RISK_COLOR);
-                } else if (verdict.contains("moderate risk")) {
-                    label.setBackground(MODERATE_RISK_COLOR);
+                } else if (verdict.contains("low risk")) {
+                    label.setBackground(LOW_RISK_COLOR);
                 } else if (verdict.contains("secure")) {
                     label.setBackground(SECURE_COLOR);
                 } else {

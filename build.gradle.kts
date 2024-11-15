@@ -19,7 +19,7 @@ java {
 
 dependencies {
     implementation("dnsjava:dnsjava:3.6.2") // DNS handling library
-    compileOnly(files("/home/wolf/Desktop/BAPP/burpsuite_pro_v2024.9.4.jar")) // Path to Burp Suite JAR
+    compileOnly(files(System.getenv("BURP_SUITE_PATH"))) // Path to Burp Suite JAR
 }
 
 tasks {
