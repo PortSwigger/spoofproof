@@ -1,0 +1,32 @@
+name: Release Version
+on:
+  release:
+    types: [released]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-java@v4.5.0
+        with:
+          java-version: 21
+          distribution: oracle
+      - run: |
+          curl -fsSL -o /tmp/burpsuite.jar https://portswigger-cdn.net/burp/releases/download?product=community&version=2024.10.1&type=Jar
+      - run: |
+          ./gradlew shadowJar
+        env:
+          BURP_SUITE_PATH: /tmp/burpsuite.jar
+      - run: |
+          version=$(grep archiveVersion build.gradle.kts | grep -oE '"[^"]*"' | tr -d '"')
+          file_name="SpoofProof-$version.jar"
+
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "file-name=$file_name" >> $GITHUB_OUTPUT
+          echo "path=build/libs/$file_name" >> $GITHUB_OUTPUT
+        id: build-artifact
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.build-artifact.outputs.path }}
