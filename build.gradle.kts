@@ -25,7 +25,7 @@ dependencies {
 tasks {
     shadowJar {
         archiveBaseName.set("SpoofProof")
-        archiveVersion.set("1.0.1")
+        archiveVersion.set("1.0.2")
         archiveClassifier.set("")
     }
 }
