@@ -16,13 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+import java.util.concurrent.TimeUnit;
+import javax.swing.UIManager;
 
 /**
  * SpoofProofExtension is a Burp Suite extension that checks DMARC, SPF, and DKIM records for a given domain.
  * It provides recommendations and a final verdict on the domain's email security configuration.
  */
-public class SpoofProofExtension implements IBurpExtender, ITab, IContextMenuFactory {
+public class SpoofProofExtension implements IBurpExtender, ITab, IContextMenuFactory, IExtensionStateListener {
     private IBurpExtenderCallbacks callbacks;
     private IExtensionHelpers helpers;
     private PrintWriter stderr; // For error logging
@@ -45,6 +46,8 @@ public class SpoofProofExtension implements IBurpExtender, ITab, IContextMenuFac
         PrintWriter stdout = new PrintWriter(callbacks.getStdout(), true);
         this.stderr = new PrintWriter(callbacks.getStderr(), true);
 
+        //added IExtensionStateListener
+        callbacks.registerExtensionStateListener(this);
         callbacks.setExtensionName("SpoofProof"); // Updated Name
 
         // Initialize UI and context menu in the Event Dispatch Thread
@@ -58,6 +61,26 @@ public class SpoofProofExtension implements IBurpExtender, ITab, IContextMenuFac
         stdout.println("GitHUB: https://github.com/AggressiveUser");
         stdout.println("LinkedIn: https://www.linkedin.com/in/aggressiveuser/");
         stdout.println("X (Twitter): https://x.com/AggressiveUserX");
+    }
+    // execution service closed is this
+    @Override
+    public void extensionUnloaded() {
+        PrintWriter stdout = new PrintWriter(callbacks.getStdout(), true);
+        stdout.println("Attempting to shut down executor service...");
+        executorService.shutdown();
+        try {
+            if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
+                stdout.println("Executor service did not terminate within the timeout. Forcing shutdown...");
+                executorService.shutdownNow();
+            }  else {
+                stdout.println("Executor service shut down gracefully.");
+            }
+        } catch (InterruptedException e) {
+            stdout.println("Executor service interrupted during shutdown. Forcing shutdown...");
+            executorService.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+        stdout.println("SpoofProof extension unloaded successfully.");
     }
 
     /**
@@ -150,6 +173,8 @@ public class SpoofProofExtension implements IBurpExtender, ITab, IContextMenuFac
         aboutPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Padding around the panel
         aboutPanel.setBackground(new Color(249, 249, 249)); // Equivalent to #f9f9f9
 
+
+
         // Logo and Title Panel
         JPanel logoTitlePanel = new JPanel();
         logoTitlePanel.setLayout(new BoxLayout(logoTitlePanel, BoxLayout.X_AXIS));
@@ -222,6 +247,16 @@ public class SpoofProofExtension implements IBurpExtender, ITab, IContextMenuFac
         );
         descriptionText.setAlignmentX(Component.LEFT_ALIGNMENT);
         //descriptionText.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 0)); // Bottom margin
+
+        // New Changes done here
+        descriptionText.setBackground(UIManager.getColor("Panel.background"));
+        aboutPanel.setBackground(UIManager.getColor("Panel.background"));
+        descriptionText.setOpaque(false);
+        logoTitlePanel.setBackground(UIManager.getColor("Panel.background"));
+        titleInfoPanel.setBackground(UIManager.getColor("Panel.background"));
+
+        descriptionText.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, true);
+        descriptionText.setForeground(UIManager.getColor("Label.foreground"));
 
 
 
