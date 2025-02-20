@@ -802,27 +802,6 @@ public class SpoofProofExtension implements IBurpExtender, ITab, IContextMenuFac
         public IHttpService getHttpService() {
             return httpService;
         }
-
-        /**
-         * Implementation of the getHost() method required by the IScanIssue interface.
-         *
-         * @return The host part of the URL associated with the issue.
-         */
-        @Override
-        public String getHost() {
-            return url.getHost();
-        }
-
-        @Override
-        public String getProtocol() {
-            return url.getProtocol();
-        }
-
-        @Override
-        public int getPort() {
-            return url.getPort() == -1 ? (getProtocol().equals("https") ? 443 : 80) : url.getPort();
-        }
-
     }
 
     /**
