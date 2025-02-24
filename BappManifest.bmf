@@ -3,10 +3,10 @@ ExtensionType: 1
 Name: SpoofProof - Domain Spoofing Validation
 RepoName: spoofproof
 ScreenVersion: 1.0.3
-SerialVersion: 1
+SerialVersion: 2
 MinPlatformVersion: 0
 ProOnly: True
-Author: AggressiveUser
+Author: Chetanya Sharma (AggressiveUser)
 ShortDescription: Verify email domain spoofing vulnerabilities and validate DNS-based email security configurations like DMARC, SPF, and DKIM.
 EntryPoint: build/libs/SpoofProof-1.0.3.jar
 BuildCommand: ./gradlew shadowJar
